@@ -52,12 +52,17 @@ class SynCache(object):
     """
 
     def __init__(self, source_uri=os.getenv("HOME"),
-                 temp_folder=tempfile.mkdtemp(prefix='diskcache'),
+                 temp_folder=None,
                  verbose=False):
-        """Summary
+        """Creates the object for sync. between source_uri and temp_folder
 
+        If not given, temp_folder will be created by means of
+        tempfile.mkdtemp(prefix='diskcache')
+        
         Raises ValueError in case of failure.
         """
+        if temp_folder is None:
+            temp_folder = tempfile.mkdtemp(prefix='diskcache')
         self._source_uri = source_uri
         self._temp_folder = os.path.abspath(temp_folder)
         flags = ["a"]
