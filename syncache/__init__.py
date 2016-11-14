@@ -21,7 +21,7 @@ Usage Example
 >>> syn.reverse_sync()
 """
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 
 __author__ = 'Francisco Zamora-Martinez'
 __copyright__ = 'Copyright 2016, Francisco Zamora-Martinez'
@@ -69,9 +69,6 @@ class SynCache(object):
         if verbose:
             flags.append("v")
         self._flags = ''.join(flags)
-        if not os.path.isdir(self._temp_folder):
-            raise ValueError("temp_folder %s should be a directory"
-                             % self._temp_folder)
 
     def sync(self):
         """Executes synchronization into the temporary folder"""
