@@ -17,7 +17,7 @@ Usage Example
 >>> syn = SynCache("/home/user", "/tmp/dest")
 >>> syn.sync()
 >>> syn.getfilename("sample.txt")
-/temp/dest/sample.txt
+/tmp/dest/sample.txt
 >>> syn.reverse_sync()
 """
 
