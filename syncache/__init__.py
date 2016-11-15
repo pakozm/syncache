@@ -12,16 +12,20 @@ Once your task finished, it is possible to reverse the
 synchronization for any output file produce during the
 computation.
 
-Usage Example
+Usage Examples
 
 >>> syn = SynCache("/home/user", "/tmp/dest")
 >>> syn.sync()
->>> syn.getfilename("sample.txt")
-/tmp/dest/sample.txt
+>>> syn.getpath("sample.txt")
+'/tmp/dest/sample.txt'
 >>> syn.reverse_sync()
+
+>>> syn = SynCache("/home/user", gen_hashed_folder(sys.argv))
+>>> syn.getpath("sample.txt")
+'/tmp/syncache-6s7fWriA9vSwnMzXsFfSuw=='
 """
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 
 __author__ = 'Francisco Zamora-Martinez'
 __copyright__ = 'Copyright 2016, Francisco Zamora-Martinez'
@@ -31,8 +35,11 @@ __maintainer__ = 'Francisco Zamora-Martinez'
 __email__ = 'pakozm@gmail.com'
 __status__ = 'Development' # Production when ready for it
 
+import base64
+import hashlib
 import logging as log
 import os
+import sys
 import tempfile
 
 def _os_system(command):
@@ -40,6 +47,11 @@ def _os_system(command):
     result = os.system(command)
     if result != 0:
         raise EnvironmentError("rsync terminated with errors")
+
+def gen_hashed_folder(args=None, prefix=os.path.join(os.sep, "tmp","syncache-")):
+    if args is None:
+        args = sys.argv
+    return prefix + base64.urlsafe_b64encode(hashlib.md5('#'.join(tuple(args))).digest())
 
 class SynCache(object):
     """Simple class for rsync-like folder copy
@@ -53,16 +65,21 @@ class SynCache(object):
 
     def __init__(self, source_uri=os.getenv("HOME"),
                  temp_folder=None,
-                 verbose=False):
+                 verbose=False,
+                 temp_prefix='syncache-'):
         """Creates the object for sync. between source_uri and temp_folder
 
         If not given, temp_folder will be created by means of
-        tempfile.mkdtemp(prefix='diskcache')
+        tempfile.mkdtemp(prefix=temp_prefix).
+        
+        It can be created using function gen_hashed_folder(args_list),
+        which returns a 'digested' folder name based on the given
+        arguments list.
         
         Raises ValueError in case of failure.
         """
         if temp_folder is None:
-            temp_folder = tempfile.mkdtemp(prefix='diskcache')
+            temp_folder = tempfile.mkdtemp(prefix=temp_prefix)
         self._source_uri = source_uri
         self._temp_folder = os.path.abspath(temp_folder)
         flags = ["a"]
@@ -73,13 +90,13 @@ class SynCache(object):
     def sync(self):
         """Executes synchronization into the temporary folder"""
         command = "rsync -%s '%s' '%s'" \
-                  % (flags, self._source_uri, self._temp_folder)
+                  % (self._flags, self._source_uri, self._temp_folder)
         _os_system(command)
 
     def reverse_sync(self):
         """Synchronizes source with temporary folder content"""
         command = "rsync -%s '%s' '%s'" \
-                  % (flags, self._temp_folder, self._source_uri)
+                  % (self._flags, self._temp_folder, self._source_uri)
         _os_system(command)
 
     def getpath(self, source_relative_path):
