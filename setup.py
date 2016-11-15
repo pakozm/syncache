@@ -36,7 +36,7 @@ setup(
     author=__author__,
     author_email=__email__,
     url='https://github.com/pakozm/syncache',
-    download_url='https://github.com/pakozm/syncache/tarball/0.2.0',
+    download_url='https://github.com/pakozm/syncache/tarball/0.2.1',
     keywords=['rsync', 'cache'],
     license=__license__,
     test_suite="nose.collector",
