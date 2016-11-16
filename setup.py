@@ -24,7 +24,7 @@ setup(
     tests_require=tests_require,
     install_requires=install_requires,
     setup_requires=setup_requires,
-    description='Synchronization Cache for Grid Computing',
+    description='A Python module for basic synchronization between one remote and a temp folder',
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
