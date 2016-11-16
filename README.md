@@ -10,6 +10,9 @@ folder you can delete it when no needed or just restart the machine.
 But if you need more than one execution with the same data, this
 package ensures it is in sync with the remote resource.
 
+Currently this package has been implemented by means of `os.system()`
+calls to `rsync` command.
+
 Usage
 -----
 
